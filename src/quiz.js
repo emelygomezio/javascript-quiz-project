@@ -26,8 +26,14 @@ class Quiz {
 
   // 5. checkAnswer(answer)
   checkAnswer(answer) {
-    this.correctAnswers++;
-  }
+    if(this.questions[this.currentQuestionIndex].answer===answer)
+    {
+      this.correctAnswers++;
+      return true
+
+    }
+
+return false  }
 
   hasEnded() {
     if (this.currentQuestionIndex < this.questions.length) {
@@ -48,10 +54,13 @@ class Quiz {
   }
 
   averageDifficulty() {
-    const sumOfDifficulty = this.questions.reduce((accumulator, currentValue) => {
-      return accumulator + currentValue.difficulty;
-    }, 0);
+    const sumOfDifficulty = this.questions.reduce(
+      (accumulator, currentValue) => {
+        return accumulator + currentValue.difficulty;
+      },
+      0
+    );
 
-    return (sumOfDifficulty / this.questions.length);
+    return sumOfDifficulty / this.questions.length;
   }
 }

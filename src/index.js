@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
   timeRemainingContainer.innerText = `${minutes}:${seconds}`;
 
   // Show first question
-  showQuestion();
+  showQuestion()
 
 
   /************  TIMER  ************/
@@ -71,6 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
   /************  FUNCTIONS  ************/
 
   // showQuestion() - Displays the current question and its choices
+  
   // nextButtonHandler() - Handles the click on the next button
   // showResults() - Displays the end view and the quiz results
 
@@ -98,19 +99,25 @@ document.addEventListener("DOMContentLoaded", () => {
     //
     // 1. Show the question
     // Update the inner text of the question container element and show the question text
+    let questionElement = document.getElementById('question')
+    questionElement.innerHTML = `${question.text} `
+
+  
+
+
 
     
     // 2. Update the green progress bar
     // Update the green progress bar (div#progressBar) width so that it shows the percentage of questions answered
     
-    progressBar.style.width = `65%`; // This value is hardcoded as a placeholder
+    progressBar.style.width = `${parseFloat(quiz.currentQuestionIndex/quiz.questions.length).toFixed(2)}%`; // This value is hardcoded as a placeholder
 
 
 
     // 3. Update the question count text 
     // Update the question count (div#questionCount) show the current question out of total questions
     
-    questionCount.innerText = `Question 1 of 10`; //  This value is hardcoded as a placeholder
+    questionCount.innerText = `${quiz.currentQuestionIndex + 1} of ${quiz.questions.length}`; //  This value is hardcoded as a placeholder
 
 
     
@@ -118,11 +125,16 @@ document.addEventListener("DOMContentLoaded", () => {
     // Loop through the current question `choices`.
       // For each choice create a new radio input with a label, and append it to the choice container.
       // Each choice should be displayed as a radio input element with a label:
-      /* 
-          <input type="radio" name="choice" value="CHOICE TEXT HERE">
-          <label>CHOICE TEXT HERE</label>
-        <br>
-      */
+       question.choices.forEach((choice) => {
+        choiceContainer.innerHTML += `
+        <li>
+        <input type="radio" name="choice" value=\'${choice}\'>
+        <label>${choice}</label>
+      <br>
+      </li>
+        `
+      })
+  
       // Hint 1: You can use the `document.createElement()` method to create a new element.
       // Hint 2: You can use the `element.type`, `element.name`, and `element.value` properties to set the type, name, and value of an element.
       // Hint 3: You can use the `element.appendChild()` method to append an element to the choices container.
@@ -133,16 +145,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
   
   function nextButtonHandler () {
-    let selectedAnswer; // A variable to store the selected answer value
+    let selectedAnswer // A variable to store the selected answer value
+  
 
 
 
     // YOUR CODE HERE:
     //
     // 1. Get all the choice elements. You can use the `document.querySelectorAll()` method.
+    const choiceElements = document.querySelectorAll("input")
+    console.log(choiceElements)
+    choiceElements.forEach((element) => {
+      console.log(element.checked)
+      if(element.checked === true)
+      {  
+        if(quiz.checkAnswer(element.value)){
+          quiz.moveToNextQuestion()
+          showQuestion()
+        }
+        
+      }
+    })
 
 
+
+
+
+   }
     // 2. Loop through all the choice elements and check which one is selected
+
       // Hint: Radio input elements have a property `.checked` (e.g., `element.checked`).
       //  When a radio input gets selected the `.checked` property will be set to true.
       //  You can use check which choice was selected by checking if the `.checked` property is true.
@@ -152,7 +183,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Check if selected answer is correct by calling the quiz method `checkAnswer()` with the selected answer.
       // Move to the next question by calling the quiz method `moveToNextQuestion()`.
       // Show the next question by calling the function `showQuestion()`.
-  }  
+  },  
 
 
 
@@ -171,4 +202,4 @@ document.addEventListener("DOMContentLoaded", () => {
     resultContainer.innerText = `You scored 1 out of 1 correct answers!`; // This value is hardcoded as a placeholder
   }
   
-});
+);
