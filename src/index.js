@@ -57,21 +57,44 @@ document.addEventListener("DOMContentLoaded", () => {
   /************  SHOW INITIAL CONTENT  ************/
 
   // Convert the time remaining in seconds to minutes and seconds, and pad the numbers with zeros if needed
-  const minutes = Math.floor(quiz.timeRemaining / 60)
-    .toString()
-    .padStart(2, "0");
-  const seconds = (quiz.timeRemaining % 60).toString().padStart(2, "0");
+  let timer = null;
 
   // Display the time remaining in the time remaining container
   const timeRemainingContainer = document.getElementById("timeRemaining");
-  timeRemainingContainer.innerText = `${minutes}:${seconds}`;
 
   // Show first question
   showQuestion();
-
+  startCountdown();
   /************  TIMER  ************/
 
-  let timer;
+  function startCountdown() {
+    
+    quiz.timeRemaining = 120;
+
+   
+    let minute = Math.floor(quiz.timeRemaining / 60)
+      .toString()
+      .padStart(2, "0");
+    let seconds = (quiz.timeRemaining % 60).toString().padStart(2, "0");
+
+    timeRemainingContainer.innerHTML = `${minute}:${seconds}`;
+
+    timer = setInterval(() => {
+      quiz.timeRemaining--;
+
+      minute = Math.floor(quiz.timeRemaining / 60)
+        .toString()
+        .padStart(2, "0");
+      seconds = (quiz.timeRemaining % 60).toString().padStart(2, "0");
+
+      timeRemainingContainer.innerHTML = `${minute}:${seconds}`;
+
+      if (quiz.timeRemaining <= 0) {
+        showResults();
+        clearInterval(timer);
+      }
+    }, 1000);
+  }
 
   /************  EVENT LISTENERS  ************/
 
@@ -110,7 +133,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // 2. Update the green progress bar
     // Update the green progress bar (div#progressBar) width so that it shows the percentage of questions answered
 
-    progressBar.style.width += `${(quiz.currentQuestionIndex / quiz.questions.length)}%`; // This value is hardcoded as a placeholder
+    progressBar.style.width += `${
+      quiz.currentQuestionIndex / quiz.questions.length
+    }%`; // This value is hardcoded as a placeholder
 
     // 3. Update the question count text
     // Update the question count (div#questionCount) show the current question out of total questions
@@ -181,7 +206,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   let restartButton = document.querySelector("#restartButton");
-  restartButton.addEventListener("restartButton", resetButtonHandler);
+  restartButton.addEventListener("click", resetButtonHandler);
 
   function resetButtonHandler() {
     // 1. Hide the quiz view (div#quizView)
@@ -191,9 +216,11 @@ document.addEventListener("DOMContentLoaded", () => {
     endView.style.display = "none";
     questionContainer.innerText = "";
     choiceContainer.innerHTML = "";
-    quiz.questions[currentQuestionIndex] = 0;
     quiz.correctAnswers = 0;
+    quiz.currentQuestionIndex = 0;
     quiz.shuffleQuestions();
     quiz.getQuestion();
+    showQuestion();
+    startCountdown();
   }
 });
